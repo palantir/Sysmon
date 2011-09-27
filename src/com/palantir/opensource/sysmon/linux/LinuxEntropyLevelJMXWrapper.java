@@ -3,12 +3,12 @@
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
 //   You may obtain a copy of the License at
-// 
+//
 //       http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 //   Unless required by applicable law or agreed to in writing, software
 //   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   
+//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 package com.palantir.opensource.sysmon.linux;
@@ -37,7 +37,7 @@ import com.palantir.opensource.sysmon.util.PropertiesUtils;
 /**
  * Monitors entropy pools that feed secure random number generation.
  * <p>
- * Entropy pool size is reported in bytes 
+ * Entropy pool size is reported in bytes
  * and is read out of the /proc filesystem on a configurable period.
  * </p>
  * <h3>JMX Data Path</h3>
@@ -50,7 +50,7 @@ import com.palantir.opensource.sysmon.util.PropertiesUtils;
  * <td><code>10</code></td>
  * <td>{@link #CONFIG_KEY_ENTROPY_LEVEL_PERIOD}</td></tr>
  * </tr></table>
- * 
+ *
  * @see Monitor Lifecycle documentation
  * @see <a href='http://linux.die.net/man/4/random'>the random(4) man page for more information on entropy pools</a>
  *
@@ -58,9 +58,9 @@ import com.palantir.opensource.sysmon.util.PropertiesUtils;
 public class LinuxEntropyLevelJMXWrapper extends Thread implements Monitor {
 
 	static final Logger log = LogManager.getLogger(LinuxEntropyLevelJMXWrapper.class);
-	
+
 	static final String CONFIG_KEY_PREFIX = LinuxMonitor.CONFIG_KEY_PREFIX + ".entropyLevel";
-	
+
 	/**
 	 * Set this value in the configuration file to set how often (in seconds) the entropy
 	 * levels are checked.
@@ -73,7 +73,7 @@ public class LinuxEntropyLevelJMXWrapper extends Thread implements Monitor {
 	 * levels are checked.
 	 * Default: {@value}
 	 * @see #CONFIG_KEY_ENTROPY_LEVEL_PERIOD for instructions on overriding the default value.
-	 */	
+	 */
 	public static final int DEFAULT_ENTROPY_LEVEL_PERIOD = 10;
 	/**
 	 * Path to check in proc for entropy pool status.
@@ -87,7 +87,7 @@ public class LinuxEntropyLevelJMXWrapper extends Thread implements Monitor {
 	public static final String OBJECT_NAME = ":type=EntropyLevel";
 	/**
 	 * Start background thread to monitor entropy levels.
-	 * 
+	 *
 	 * @throws LinuxMonitoringException
 	 */
 	public void startMonitoring() {
@@ -103,10 +103,10 @@ public class LinuxEntropyLevelJMXWrapper extends Thread implements Monitor {
 		this.shutdown = true;
 		this.join();
 	}
-	
+
 	/**
 	 * MX Bean holding entropy pool size.  Defaults to 0 before any readings.
-	 * 
+	 *
 	 */
 	final LinuxEntropyLevel bean = new LinuxEntropyLevel(0);
 
@@ -123,36 +123,36 @@ public class LinuxEntropyLevelJMXWrapper extends Thread implements Monitor {
 	 * Path to place the entropy pool data.
 	 */
 	final String beanPath;
-	
+
 	/**
-	 * Constructs a new {@link LinuxEntropyLevel} object.  You must call 
-	 * {@link #startMonitoring()} to start the background thread that will 
+	 * Constructs a new {@link LinuxEntropyLevel} object.  You must call
+	 * {@link #startMonitoring()} to start the background thread that will
 	 * continually update the entropy pool values.
-	 * 
+	 *
 	 * Note that the constructor will do a single read of the entropy to verify that everything
-	 * will work in the background thread.  Therefore, constructing one of these object is a valid 
+	 * will work in the background thread.  Therefore, constructing one of these object is a valid
 	 * way to take a one-time reading of the entropy pool size.
-	 * 
+	 *
 	 * @param config configuration for this JMX wrapper.  Passing null or an empty
 	 * {@link Properties} object will just use the default config values.
 	 * @throws LinuxMonitoringException on configuration or data read error.
-	 * 
+	 *
 	 */
 	public LinuxEntropyLevelJMXWrapper(Properties config) throws LinuxMonitoringException {
 		super(LinuxEntropyLevelJMXWrapper.class.getSimpleName());
 		this.setDaemon(true);
-		
+
 		// use empty properties to avoid NPE and pick up defaults
 		if(config == null) {
 			config = new Properties();
 		}
-		
+
 		try {
-			String beanPathPrefix = config.getProperty(LinuxMonitor.CONFIG_KEY_JMX_BEAN_PATH, 
+			String beanPathPrefix = config.getProperty(LinuxMonitor.CONFIG_KEY_JMX_BEAN_PATH,
 			                                           LinuxMonitor.DEFAULT_JMX_BEAN_PATH);
 			this.beanPath = beanPathPrefix + OBJECT_NAME;
-			this.period = PropertiesUtils.extractInteger(config, 
-			                                             CONFIG_KEY_ENTROPY_LEVEL_PERIOD, 
+			this.period = PropertiesUtils.extractInteger(config,
+			                                             CONFIG_KEY_ENTROPY_LEVEL_PERIOD,
 			                                             DEFAULT_ENTROPY_LEVEL_PERIOD);
 		} catch (NumberFormatException e) {
 			throw new LinuxMonitoringException("Invalid config parameter for " + CONFIG_KEY_ENTROPY_LEVEL_PERIOD, e);
@@ -198,7 +198,7 @@ public class LinuxEntropyLevelJMXWrapper extends Thread implements Monitor {
 
 	/**
 	 * Reads the entropy pool out of the /proc file system and publishes value to a JMX MXBean.
-	 * 
+	 *
 	 * @throws LinuxMonitoringException on error with reading value.
 	 */
 	void readData() throws LinuxMonitoringException {

@@ -3,12 +3,12 @@
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
 //   You may obtain a copy of the License at
-// 
+//
 //       http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 //   Unless required by applicable law or agreed to in writing, software
 //   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   
+//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 package com.palantir.opensource.sysmon.linux;
@@ -18,8 +18,8 @@ import java.lang.reflect.Field;
 
 /**
  * Data container and JMX MBean implementation for
- * <a href='http://linux.die.net/man/1/iostat'>vmstat</a> data used by 
- * {@link LinuxVMStatJMXWrapper}. 
+ * <a href='http://linux.die.net/man/1/iostat'>vmstat</a> data used by
+ * {@link LinuxVMStatJMXWrapper}.
  */
 public class LinuxVMStat implements LinuxVMStatMBean {
 
@@ -66,7 +66,7 @@ public class LinuxVMStat implements LinuxVMStatMBean {
 			throw new LinuxMonitoringException("Error while refletively copying fields",e);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.palantir.monitoring.client.linux.LinuxVMStatMBean#getRunningProcesses()
 	 */
@@ -74,7 +74,7 @@ public class LinuxVMStat implements LinuxVMStatMBean {
 		return runningProcesses;
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see com.palantir.monitoring.client.linux.LinuxVMStatMBean#getSleepingProcesses()
 	 */
@@ -82,7 +82,7 @@ public class LinuxVMStat implements LinuxVMStatMBean {
 		return sleepingProcesses;
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see com.palantir.monitoring.client.linux.LinuxVMStatMBean#getSwappedMemory()
 	 */
@@ -90,7 +90,7 @@ public class LinuxVMStat implements LinuxVMStatMBean {
 		return swappedMemory;
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see com.palantir.monitoring.client.linux.LinuxVMStatMBean#getFreeMemory()
 	 */
@@ -98,7 +98,7 @@ public class LinuxVMStat implements LinuxVMStatMBean {
 		return freeMemory;
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see com.palantir.monitoring.client.linux.LinuxVMStatMBean#getBuffersMemory()
 	 */
@@ -106,7 +106,7 @@ public class LinuxVMStat implements LinuxVMStatMBean {
 		return buffersMemory;
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see com.palantir.monitoring.client.linux.LinuxVMStatMBean#getCacheMemory()
 	 */
@@ -114,7 +114,7 @@ public class LinuxVMStat implements LinuxVMStatMBean {
 		return cacheMemory;
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see com.palantir.monitoring.client.linux.LinuxVMStatMBean#getInactiveMemory()
 	 */
@@ -122,7 +122,7 @@ public class LinuxVMStat implements LinuxVMStatMBean {
 		return swapIn;
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see com.palantir.monitoring.client.linux.LinuxVMStatMBean#getActiveMemory()
 	 */
@@ -130,7 +130,7 @@ public class LinuxVMStat implements LinuxVMStatMBean {
 		return swapOut;
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see com.palantir.monitoring.client.linux.LinuxVMStatMBean#getBlocksRead()
 	 */
@@ -138,7 +138,7 @@ public class LinuxVMStat implements LinuxVMStatMBean {
 		return blocksRead;
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see com.palantir.monitoring.client.linux.LinuxVMStatMBean#getBlocksWritten()
 	 */
@@ -146,7 +146,7 @@ public class LinuxVMStat implements LinuxVMStatMBean {
 		return blocksWritten;
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see com.palantir.monitoring.client.linux.LinuxVMStatMBean#getInterrupts()
 	 */
@@ -154,7 +154,7 @@ public class LinuxVMStat implements LinuxVMStatMBean {
 		return interrupts;
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see com.palantir.monitoring.client.linux.LinuxVMStatMBean#getContextSwitches()
 	 */
@@ -162,7 +162,7 @@ public class LinuxVMStat implements LinuxVMStatMBean {
 		return contextSwitches;
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see com.palantir.monitoring.client.linux.LinuxVMStatMBean#getUserPercentCPU()
 	 */
@@ -170,7 +170,7 @@ public class LinuxVMStat implements LinuxVMStatMBean {
 		return userPercentCPU;
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see com.palantir.monitoring.client.linux.LinuxVMStatMBean#getSysPercentCPU()
 	 */
@@ -178,7 +178,7 @@ public class LinuxVMStat implements LinuxVMStatMBean {
 		return sysPercentCPU;
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see com.palantir.monitoring.client.linux.LinuxVMStatMBean#getIdlePercentCPU()
 	 */
@@ -186,7 +186,7 @@ public class LinuxVMStat implements LinuxVMStatMBean {
 		return idlePercentCPU;
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see com.palantir.monitoring.client.linux.LinuxVMStatMBean#getWaitPercentCPU()
 	 */
@@ -194,12 +194,12 @@ public class LinuxVMStat implements LinuxVMStatMBean {
 		return waitPercentCPU;
 	}
 
-	
+
 	/* (non-Javadoc)
 	 * @see com.palantir.monitoring.client.linux.LinuxVMStatMBean#getStolenFromVMCPU()
 	 */
 	public synchronized Integer getStolenFromVMCPU() {
 		return stolenFromVMCPU;
 	}
-	
+
 }

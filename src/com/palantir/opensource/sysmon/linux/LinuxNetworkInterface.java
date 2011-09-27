@@ -3,12 +3,12 @@
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
 //   You may obtain a copy of the License at
-// 
+//
 //       http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 //   Unless required by applicable law or agreed to in writing, software
 //   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   
+//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 package com.palantir.opensource.sysmon.linux;
@@ -55,7 +55,7 @@ public class LinuxNetworkInterface implements LinuxNetworkInterfaceMBean {
 	 */
 	long recieveErrors = 0;
 	/**
-	 * The total number of packets dropped by the device driver. 
+	 * The total number of packets dropped by the device driver.
 	 */
 	long droppedReceivedPackets = 0;
 	/**
@@ -71,7 +71,7 @@ public class LinuxNetworkInterface implements LinuxNetworkInterfaceMBean {
 	 */
 	long compressedPacketsReceived = 0;
 	/**
-	 * The number of multicast frames received by the device driver. 
+	 * The number of multicast frames received by the device driver.
 	 */
 	long multicastFramesReceived = 0;
 
@@ -91,7 +91,7 @@ public class LinuxNetworkInterface implements LinuxNetworkInterfaceMBean {
 	 */
 	long sendErrors = 0;
 	/**
-	 * The total number of packets dropped by the device driver. 
+	 * The total number of packets dropped by the device driver.
 	 */
 	long droppedSentPackets = 0;
 	/**
@@ -99,11 +99,11 @@ public class LinuxNetworkInterface implements LinuxNetworkInterfaceMBean {
 	 */
 	long sentFIFOErrors = 0;
 	/**
-	 * The number of collisions detected on the interface. 
+	 * The number of collisions detected on the interface.
 	 */
 	long collisions = 0;
 	/**
-	 * The number of carrier losses detected by the device driver. 
+	 * The number of carrier losses detected by the device driver.
 	 */
 	long carrierDrops = 0;
 	/**
@@ -122,15 +122,15 @@ public class LinuxNetworkInterface implements LinuxNetworkInterfaceMBean {
 
 
 	LinuxNetworkInterface(String objectName) {
-		this.objectName = objectName; 
+		this.objectName = objectName;
 	}
-	
+
 	public synchronized void takeValues(LinuxNetworkInterface dataBean) throws LinuxMonitoringException {
 		if(dataBean == null) {
 			throw new NullPointerException("Can't copy values from null bean!");
 		}
 		if(!interfaceName.equals(dataBean.interfaceName)) {
-			throw new IllegalArgumentException("interface name mismatch: " + 
+			throw new IllegalArgumentException("interface name mismatch: " +
 			                                   interfaceName + " vs. " + dataBean.interfaceName);
 		}
 		try {
@@ -156,15 +156,15 @@ public class LinuxNetworkInterface implements LinuxNetworkInterfaceMBean {
 		long bytesSent = Math.abs(dataBean.bytesSent - this.bytesSent);
 		long packetsRec = Math.abs(dataBean.packetsReceived - this.packetsReceived);
 		long packetsSent = Math.abs(dataBean.packetsSent - this.packetsSent);
-		
+
 		this.timespan = timespan;
 		this.bytesPerSecondReceived   = (long)(1000f * ((float) bytesRec / (float) timespan));
 		this.bytesPerSecondSent       = (long)(1000f * ((float) bytesSent / (float) timespan));
 		this.packetsPerSecondReceived = (long)(1000f * ((float) packetsRec / (float) timespan));
 		this.packetsPerSecondSent     = (long)(1000f * ((float) packetsSent / (float) timespan));
-	
+
 	}
-	
+
 	static final float ONE_MB = 1024 * 1024;
 	private String formatByteRates(long bytesPerSec) {
 		final float Bps = bytesPerSec;
@@ -186,92 +186,92 @@ public class LinuxNetworkInterface implements LinuxNetworkInterfaceMBean {
 		out.append(" - ").append(this.timestamp);
 		return out.toString();
 	}
-	
+
 	public synchronized final long getTimestamp() {
 		return timestamp;
 	}
 
-	
+
 	public synchronized final String getInterfaceName() {
 		return interfaceName;
 	}
 
-	
+
 	public synchronized final long getBytesReceived() {
 		return bytesReceived;
 	}
 
-	
+
 	public synchronized final long getPacketsReceived() {
 		return packetsReceived;
 	}
 
-	
+
 	public synchronized final long getRecieveErrors() {
 		return recieveErrors;
 	}
 
-	
+
 	public synchronized final long getDroppedReceivedPackets() {
 		return droppedReceivedPackets;
 	}
 
-	
+
 	public synchronized final long getReceiveFIFOErrors() {
 		return receiveFIFOErrors;
 	}
 
-	
+
 	public synchronized final long getReceiveFrameErrors() {
 		return receiveFrameErrors;
 	}
 
-	
+
 	public synchronized final long getCompressedPacketsReceived() {
 		return compressedPacketsReceived;
 	}
 
-	
+
 	public synchronized final long getMulticastFramesReceived() {
 		return multicastFramesReceived;
 	}
 
-	
+
 	public synchronized final long getBytesSent() {
 		return bytesSent;
 	}
 
-	
+
 	public synchronized final long getPacketsSent() {
 		return packetsSent;
 	}
 
-	
+
 	public synchronized final long getSendErrors() {
 		return sendErrors;
 	}
 
-	
+
 	public synchronized final long getDroppedSentPackets() {
 		return droppedSentPackets;
 	}
 
-	
+
 	public synchronized final long getSentFIFOErrors() {
 		return sentFIFOErrors;
 	}
 
-	
+
 	public synchronized final long getCollisions() {
 		return collisions;
 	}
 
-	
+
 	public synchronized final long getCarrierDrops() {
 		return carrierDrops;
 	}
 
-	
+
 	public synchronized final long getCompressedPacketsTransmitted() {
 		return compressedPacketsTransmitted;
 	}
@@ -301,29 +301,29 @@ public class LinuxNetworkInterface implements LinuxNetworkInterfaceMBean {
 		return true;
 	}
 
-	
+
 	public synchronized final long getBytesPerSecondReceived() {
 		return bytesPerSecondReceived;
 	}
 
-	
+
 	public synchronized final long getBytesPerSecondSent() {
 		return bytesPerSecondSent;
 	}
 
-	
+
 	public synchronized final long getPacketsPerSecondReceived() {
 		return packetsPerSecondReceived;
 	}
 
-	
+
 	public synchronized final long getPacketsPerSecondSent() {
 		return packetsPerSecondSent;
 	}
 
-	
+
 	public synchronized final long getTimespan() {
 		return timespan;
 	}
-	
+
 }

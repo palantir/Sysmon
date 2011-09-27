@@ -3,12 +3,12 @@
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
 //   You may obtain a copy of the License at
-// 
+//
 //       http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 //   Unless required by applicable law or agreed to in writing, software
 //   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   
+//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 package com.palantir.opensource.sysmon;
@@ -18,7 +18,7 @@ import java.util.Properties;
 
 /**
  * Interface for platform monitors.
- * 
+ *
  *
  */
 public interface SystemMonitor {
@@ -31,12 +31,12 @@ public interface SystemMonitor {
 	/**
 	 * Prefix for configuration keys found in the {@link Properties} objects passed to
 	 * {@link #startPlatformSpecificMonitoring(Properties)}.  Implementations should use
-	 * this constant to build up their own config prefixes so as to avoid conflicts in the 
+	 * this constant to build up their own config prefixes so as to avoid conflicts in the
 	 * configuration namespace.
 	 * Config prefix: {@value}
 	 */
 	public static final String CONFIG_KEY_PREFIX = "sysmon";
-	
+
 	/**
 	 * Start monitoring for this specific platform (as implemented by instances of this interface).
 	 * @param config configuration information for the specific monitor implementations.  Must empty
@@ -48,7 +48,7 @@ public interface SystemMonitor {
 	 * Stop monitoring for this specific platform (as implemented by instances of this interface).
 	 */
 	public void stopPlatformSpecificMonitoring();
-	
+
 	/**
 	 * Tells the platform specific monitor to check that it believes that it is compatible
 	 * with the current VM's execution environments.  This is where the platform monitor
@@ -56,5 +56,5 @@ public interface SystemMonitor {
 	 * @throws Exception to specify errors with execution environment.
 	 */
 	public void verifyExecutionEnvironment(Properties config) throws SysmonException;
-	
+
 }

@@ -3,12 +3,12 @@
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
 //   You may obtain a copy of the License at
-// 
+//
 //       http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 //   Unless required by applicable law or agreed to in writing, software
 //   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   
+//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 package com.palantir.opensource.sysmon.linux;
@@ -31,22 +31,22 @@ import com.palantir.opensource.sysmon.util.PropertiesUtils;
 
 /**
  * <p>
- * Monitors disk space on a Linux system.  Requires the 
+ * Monitors disk space on a Linux system.  Requires the
  * <a href='http://linux.die.net/man/1/df'>df</a> utility (part of the coreutils package
  * on Redhat based systems.
  * </p><p>
  * Reads the output from 'df -P -B M' that looks like this:
- * 
+ *
  * <pre>
  *  Filesystem         1048576-blocks      Used Available Capacity Mounted on
  *  /dev/md0                19689M     5275M    13414M      29% /
  *  none                     4021M        0M     4021M       0% /dev/shm
  *  /dev/md1                51376M    48506M      262M     100% /u1
  * </pre>
- * 
+ *
  * It then looks up the filesystem type by reading /proc/self/mounts (for maximum portability).
  * </p>
- * 
+ *
  * <h3>JMX Data Path</h3>
  * Each device will be at:<br/>
  * <code>sysmon.linux.beanpath:type=filesystem,devicename=&lt;devicename&gt;</code>
@@ -83,27 +83,27 @@ import com.palantir.opensource.sysmon.util.PropertiesUtils;
  * <td><code>/etc/mtab</code></td>
  * <td>{@link #CONFIG_KEY_MTAB_PATH}</td></tr>
  * </tr></table>
-* 
+*
  * @see Monitor Lifecycle documentation
- * 
+ *
  */
 public class LinuxDiskspaceJMXWrapper extends Thread implements Monitor {
 
 	private static final Logger log = LogManager.getLogger(LinuxDiskspaceJMXWrapper.class);
 
 	static final String CONFIG_KEY_PREFIX = LinuxMonitor.CONFIG_KEY_PREFIX + ".df";
-	
+
 	/**
 	 * Path to the df executable. Defaults to "df" (uses $PATH to find executable).
 	 * Set this config value in the to override where to find df.
-	 * 
+	 *
 	 * Config key: {@value}
 	 * @see LinuxDiskspaceJMXWrapper#DEFAULT_DF_PATH default value for this config parameter
 	 * @see <a href='http://linux.die.net/man/1/df'>df(1) on your local linux box</a>
-	 */	
+	 */
 	public static final String CONFIG_KEY_DF_PATH = CONFIG_KEY_PREFIX + ".df.path";
 	/**
-	 * Options passed to df.  
+	 * Options passed to df.
 	 * Set this key in config file to override defaults options.
 	 * Config key: {@value}
 	 * @see #DEFAULT_DF_OPTIONS
@@ -111,48 +111,48 @@ public class LinuxDiskspaceJMXWrapper extends Thread implements Monitor {
 	 */
 	public static final String CONFIG_KEY_DF_OPTIONS = CONFIG_KEY_PREFIX + ".df.block.opts";
 	/**
-	 * Options passed to df when calculating free inodes.  
+	 * Options passed to df when calculating free inodes.
 	 * Set this key in config file to override defaults options.
 	 * Config key: {@value}
 	 * @see #DEFAULT_DF_INODE_OPTIONS
 	 * @see <a href='http://linux.die.net/man/1/df'>df(1) on your local linux box</a>
-	 */	
+	 */
 	public static final String CONFIG_KEY_DF_INODE_OPTIONS = CONFIG_KEY_PREFIX + ".df.inode.opts";
 	/**
-	 * How often to run space calculations, in seconds.  
+	 * How often to run space calculations, in seconds.
 	 * Set this key in config file to override defaults options.
 	 * Config key: {@value}
 	 * @see #DEFAULT_DF_PERIOD
 	 * @see <a href='http://linux.die.net/man/1/df'>df(1) on your local linux box</a>
-	 */	
+	 */
 	public static final String CONFIG_KEY_DF_PERIOD = CONFIG_KEY_PREFIX + ".df.period";
 	/**
-	 * Comma-separated list of device names (full path) to ignore when 
+	 * Comma-separated list of device names (full path) to ignore when
 	 * making free space calculations.
-	 *   
+	 *
 	 * Set this key in config file to override defaults options.
 	 * Config key: {@value}
 	 * @see #DEFAULT_DF_DEVICE_NAME_FILTER
 	 * @see <a href='http://linux.die.net/man/1/df'>df(1) on your local linux box</a>
-	 */	
+	 */
 	public static final String CONFIG_KEY_DF_DEVICE_NAME_FILTER = CONFIG_KEY_PREFIX + ".df.deviceNameFilter";
 	/**
 	 * Comma-separated list of file system types to ignore when making free space calculations.
-	 *   
+	 *
 	 * Set this key in config file to override defaults options.
 	 * Config key: {@value}
 	 * @see #DEFAULT_DF_FS_TYPE_FILTER
 	 * @see <a href='http://linux.die.net/man/1/df'>df(1) on your local linux box</a>
-	 */	
+	 */
 	public static final String CONFIG_KEY_DF_FS_TYPE_FILTER = CONFIG_KEY_PREFIX + ".df.fsTypeFilter";
 	/**
 	 * Path to the mtab file.
-	 *   
+	 *
 	 * Set this key in config file to override defaults options.
 	 * Config key: {@value}
 	 * @see #DEFAULT_MTAB_PATH
 	 * @see <a href='http://linux.die.net/man/8/mount'>mount(8) on your local linux box</a>
-	 */	
+	 */
 	public static final String CONFIG_KEY_MTAB_PATH = CONFIG_KEY_PREFIX + ".mtab.path";
 	/**
 	 * For each device name and the passed JMX bean path, the a bean will be mounted
@@ -204,30 +204,30 @@ public class LinuxDiskspaceJMXWrapper extends Thread implements Monitor {
 	/**
 	 * {@link Pattern} for recognizing the df header.
 	 */
-	private static final Pattern DF_HEADER_PATTERN = 
+	private static final Pattern DF_HEADER_PATTERN =
 		Pattern.compile("^\\s*Filesystem\\s+\\d+-blocks\\s+Used\\s+Available\\s+Capacity\\s+Mounted on\\s*$");
 	/**
 	 * {@link Pattern} for parsing df data.
 	 */
-	private static final Pattern DF_INODE_DATA_PATTERN = 
+	private static final Pattern DF_INODE_DATA_PATTERN =
 		Pattern.compile("^\\s*(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S(.*?\\S)?)\\s*$");
 	/**
 	 * {@link Pattern} for recognizing the df inode header.
 	 */
-	private static final Pattern DF_DATA_PATTERN = 
+	private static final Pattern DF_DATA_PATTERN =
 		Pattern.compile("^\\s*(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S(.*?\\S)?)\\s*$");
 	/**
 	 * {@link Pattern} for parsing df inode data.
 	 */
-	private static final Pattern DF_INODE_HEADER_PATTERN = 
+	private static final Pattern DF_INODE_HEADER_PATTERN =
 		Pattern.compile("^\\s*Filesystem\\s+Inodes\\s+IUsed\\s+IFree\\s+IUse%\\s+Mounted on\\s*$");
 	/**
 	 * {@link Pattern} for parsing of mtab data.
 	 */
-	private static final Pattern MTAB_DATA = 
+	private static final Pattern MTAB_DATA =
 		Pattern.compile("^\\s*(\\S+)\\s+\\S(.*?\\S)?\\s+(\\S+)\\s+\\S+\\s+\\d+\\s+\\d+\\s*$");
 
-	
+
 	// instance variables to hold all the config options
 	final String dfCmd[];
 	final String dfInodeCmd[];
@@ -236,8 +236,8 @@ public class LinuxDiskspaceJMXWrapper extends Thread implements Monitor {
 	 */
 	final long period;
 	final String dfPath;
-	final String dfOptions; 
-	final String dfInodeOptions; 
+	final String dfOptions;
+	final String dfInodeOptions;
 	final File mtabPath;
 	final Set<String> dfDeviceNameFilter = new HashSet<String>();
 	final Set<String> dfFsTypeFilter = new HashSet<String>();
@@ -263,15 +263,15 @@ public class LinuxDiskspaceJMXWrapper extends Thread implements Monitor {
 		this.setDaemon(true);
 
 		// configure
-		this.beanPathPrefix = config.getProperty(LinuxMonitor.CONFIG_KEY_JMX_BEAN_PATH, 
+		this.beanPathPrefix = config.getProperty(LinuxMonitor.CONFIG_KEY_JMX_BEAN_PATH,
 		                                         LinuxMonitor.DEFAULT_JMX_BEAN_PATH) +
 		                                         OBJECT_NAME_PREFIX;
 		this.dfPath = config.getProperty(CONFIG_KEY_DF_PATH,DEFAULT_DF_PATH);
 		this.dfOptions = config.getProperty(CONFIG_KEY_DF_OPTIONS, DEFAULT_DF_OPTIONS);
 		this.dfInodeOptions = config.getProperty(CONFIG_KEY_DF_INODE_OPTIONS, DEFAULT_DF_INODE_OPTIONS);
 		try {
-			int periodSeconds = PropertiesUtils.extractInteger(config, 
-			                                                   CONFIG_KEY_DF_PERIOD, 
+			int periodSeconds = PropertiesUtils.extractInteger(config,
+			                                                   CONFIG_KEY_DF_PERIOD,
 			                                                   DEFAULT_DF_PERIOD);
 			this.period = periodSeconds * 1000; // millis
 		} catch (NumberFormatException e) {
@@ -314,8 +314,8 @@ public class LinuxDiskspaceJMXWrapper extends Thread implements Monitor {
 		try {
 			readData();
 		} finally {
-			timer.cancel();	
-		}			
+			timer.cancel();
+		}
 	}
 
 	/**
@@ -324,9 +324,9 @@ public class LinuxDiskspaceJMXWrapper extends Thread implements Monitor {
 	public void startMonitoring() {
 		this.start();
 	}
-	
+
 	/**
-	 * Signals shutdown to background thread and then waits for thread to die. 
+	 * Signals shutdown to background thread and then waits for thread to die.
 	 * @throws InterruptedException if interrupted while waiting for thread to die.
 	 */
 	public void stopMonitoring() throws InterruptedException {
@@ -334,7 +334,7 @@ public class LinuxDiskspaceJMXWrapper extends Thread implements Monitor {
 		this.interrupt();
 		this.join(this.period * 2);
 	}
-	
+
 	@Override
 	public void run() {
 		try {
@@ -370,7 +370,7 @@ public class LinuxDiskspaceJMXWrapper extends Thread implements Monitor {
 	/**
 	 * Here's where the sausage gets made - run df in separate process and read its output into
 	 * {@link DfData} structures.
-	 * 
+	 *
 	 * @param cmd
 	 * @param headerPattern
 	 * @param dataPattern
@@ -402,7 +402,7 @@ public class LinuxDiskspaceJMXWrapper extends Thread implements Monitor {
 			// Read data.
 			do {
 				line = stdout.readLine();
-				if (line != null) { 
+				if (line != null) {
 					m = dataPattern.matcher(line);
 					if (m.matches()) {
 						DfData dfData = new DfData(
@@ -433,7 +433,7 @@ public class LinuxDiskspaceJMXWrapper extends Thread implements Monitor {
 	private void updateBeans(Map<String, String> fsTypeMap,
 	                         Map<String, DfData> dfDataMap,
 	                         Map<String, DfData> dfInodeDataMap) throws LinuxMonitoringException {
-		
+
 		// these are maps df output data, keyed by devicename
 		for (String deviceName : dfDataMap.keySet()) {
 			String fsType = fsTypeMap.get(deviceName);
@@ -495,7 +495,7 @@ public class LinuxDiskspaceJMXWrapper extends Thread implements Monitor {
 
 	private Map<String, String> readFileSystemTypes() throws LinuxMonitoringException {
 		BufferedReader mounts = null;
-		final Map<String,String> fsTypeMap = new HashMap<String, String>(); 
+		final Map<String,String> fsTypeMap = new HashMap<String, String>();
 		try {
 			mounts = new BufferedReader(new InputStreamReader(new FileInputStream(mtabPath)));
 
@@ -514,7 +514,7 @@ public class LinuxDiskspaceJMXWrapper extends Thread implements Monitor {
 				}
 			} while(line != null);
 		} catch (IOException e) {
-			throw new LinuxMonitoringException("Error while reading data from " + 
+			throw new LinuxMonitoringException("Error while reading data from " +
 			                                   mtabPath.getAbsolutePath(),
 			                                   e);
 		} finally {
@@ -522,11 +522,11 @@ public class LinuxDiskspaceJMXWrapper extends Thread implements Monitor {
 		}
 		return fsTypeMap;
 	}
-	
-	
+
+
 	/**
 	 * Data container representing a device/mount point and all its attendant data.
-	 * Values are unitless and are used to represent either megabytes or inodes - the output 
+	 * Values are unitless and are used to represent either megabytes or inodes - the output
 	 * of a df line.
 	 */
 	private static class DfData {
@@ -537,7 +537,7 @@ public class LinuxDiskspaceJMXWrapper extends Thread implements Monitor {
 		private final Long available;
 		private final Byte percentageUsed;
 		public DfData(
-				String deviceName, 
+				String deviceName,
 				String mountPoint,
 				Long total,
 				Long used,
@@ -584,12 +584,12 @@ public class LinuxDiskspaceJMXWrapper extends Thread implements Monitor {
 	}
 
 	private static final Timer TIMER = new Timer("DiskspaceMonitor Kill Timer", true);
-	
+
 	/**
 	 * Sets a background task to kill the child process of this monitor
 	 * if it's taking too long to produce data.  Caller holds reference to passed
 	 * object and calls {@link KillTimerTask#cancel()} once background work has completed.
-	 * 
+	 *
 	 * @param delay millis to wait before killing background process
 	 * @see Timer
 	 * @return {@link KillTimerTask} object used to cancel timer.
@@ -602,7 +602,7 @@ public class LinuxDiskspaceJMXWrapper extends Thread implements Monitor {
 
 	/**
 	 * Class used to kill background tasks that are taking too long to execute.
-	 * 
+	 *
 	 *
 	 */
 	private class KillTimerTask extends TimerTask {

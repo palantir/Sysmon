@@ -3,12 +3,12 @@
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
 //   You may obtain a copy of the License at
-// 
+//
 //       http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 //   Unless required by applicable law or agreed to in writing, software
 //   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   
+//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 package com.palantir.opensource.sysmon.linux;
@@ -37,7 +37,7 @@ import com.palantir.opensource.sysmon.SystemMonitor;
 public class LinuxMonitor implements SystemMonitor {
 
 	static final Logger log = LogManager.getLogger(LinuxMonitor.class);
-	
+
 	/**
 	 * Prefix for configuration key for the {@link LinuxMonitor}.
 	 * Prefix: {@value}
@@ -48,17 +48,17 @@ public class LinuxMonitor implements SystemMonitor {
 	 * Path: {@value}
 	 */
 	public static final String DEFAULT_JMX_BEAN_PATH = SystemMonitor.DEFAULT_JMX_BEAN_PATH + ".linux";
-	
+
 	public static final String CONFIG_KEY_JMX_BEAN_PATH = CONFIG_KEY_PREFIX + ".beanpath";
-	
-	private final Collection<Monitor> monitors = new ArrayList<Monitor>(); 
-	
+
+	private final Collection<Monitor> monitors = new ArrayList<Monitor>();
+
 
 	/**
 	 * Starts up monitoring for a Linux VM. The failure of any monitor during configuration and startup
 	 * results in a fatal error and all monitors will be shutdown.
-	 * 
-	 * @throws SysmonException if this platform doesn't match this monitor.  The method 
+	 *
+	 * @throws SysmonException if this platform doesn't match this monitor.  The method
 	 * {@link #verifyExecutionEnvironment(Properties)}
 	 * @throws LinuxMonitoringException - on error with configuration or startup of a specific monitor.
 	 * should be called first to check for potential mismatches between platform and monitor.
@@ -67,14 +67,14 @@ public class LinuxMonitor implements SystemMonitor {
 
 		// copy config so we can change it
 		config = (Properties)config.clone();
-		
+
 		// set bean path to default, if not overridden
 		if(!config.containsKey(CONFIG_KEY_JMX_BEAN_PATH)){
 			config.setProperty(CONFIG_KEY_JMX_BEAN_PATH, DEFAULT_JMX_BEAN_PATH);
 		}
-		
+
 		verifyExecutionEnvironment(config);
-		
+
 		log.info("Starting platform-specific monitoring for Linux.");
 		try {
 			try {
@@ -127,7 +127,7 @@ public class LinuxMonitor implements SystemMonitor {
 		} catch (LinuxMonitoringException e) {
 			// re-catching an earlier exception
 			for(Monitor m : monitors) {
-				log.info("Shutting down monitor " + m.getClass().getSimpleName() + 
+				log.info("Shutting down monitor " + m.getClass().getSimpleName() +
 				         " due to startup errors with another monitor");
 				try {
 					m.stopMonitoring();
@@ -143,15 +143,15 @@ public class LinuxMonitor implements SystemMonitor {
 	 */
 	public void stopPlatformSpecificMonitoring() {
 		ExecutorService executor = Executors.newFixedThreadPool(monitors.size(), new ThreadFactory() {
-			
+
 			public Thread newThread(Runnable r) {
 				Thread t = new Thread(r);
 				t.setName("Shutdown thread");
 				return t;
 			}
 		});
-		
-		
+
+
 		// shutdown in parallel
 		for(Monitor s : monitors){
 			executor.submit(new ShutdownTask(s));
@@ -162,21 +162,21 @@ public class LinuxMonitor implements SystemMonitor {
 		} catch (InterruptedException e) {
 			System.out.println("Skipping orderly shutdown due to interrupt.");
 		}
-		
+
 	}
-	
+
 	/**
 	 * Runs any tests to verify that the currently running VM is appropriate for this monitor.
 	 * In particular, this monitors checks that the VM is running on <code>os.name</code> of 'Linux'
 	 * and that the <code>os.version</code> starts with '2.6'.
-	 * @param config configuration parameters to be used with this monitor.  Currently ignored by 
+	 * @param config configuration parameters to be used with this monitor.  Currently ignored by
 	 * this particular implementation.
 	 * @throws SysmonException if the execution environment is not apropriate for this monitor.
 	 */
 	public void verifyExecutionEnvironment(Properties config) throws SysmonException {
 		String osName = System.getProperty("os.name","UNKNOWN"); // use default to avoid NPE
 		String osVersion = System.getProperty("os.version","UNKNOWN"); // use default to avoid NPE
-		
+
 		if(!osName.equals("Linux")) {
 			throw new SysmonException("Linux monitoring can only run on Linux.  Platform: " + osName);
 		}

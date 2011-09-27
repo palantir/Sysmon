@@ -3,12 +3,12 @@
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
 //   You may obtain a copy of the License at
-// 
+//
 //       http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 //   Unless required by applicable law or agreed to in writing, software
 //   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   
+//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 package com.palantir.opensource.sysmon.linux;
@@ -40,14 +40,14 @@ import com.palantir.opensource.sysmon.util.PropertiesUtils;
  * <pre>
  *  13:22:52 up 18 days, 20:51,  3 users,  load average: 0.31, 0.14, 0.10
  * </pre>
- * </p> 
+ * </p>
  * <p>
  * Currently, the uptime data from <code>uptime</code> is not processed.
  * </p>
- * 
+ *
  * <h3>JMX Data Path</h3>
  * <code>sysmon.linux.beanpath:type=LoadAverage</code>
- *  
+ *
  * <h3>Configuration parameters</h3>
  * <em>Note that any value not set in the config file will use the default value.</em>
  * <table cellspacing=5 cellpadding=5><tr><th>Config Key</th><th>Description</th><th>Default Value</th><th>Constant</th></tr>
@@ -60,7 +60,7 @@ import com.palantir.opensource.sysmon.util.PropertiesUtils;
  * <td><code>10</code></td>
  * <td>{@link #CONFIG_KEY_UPTIME_PERIOD}</td></tr>
  * </tr></table>
- * 
+ *
  * @see Monitor Lifecycle documentation
  *
  */
@@ -114,15 +114,15 @@ public class LinuxLoadAverageJMXWrapper extends Thread implements Monitor {
 		this.setDaemon(true);
 
 		// configure
-		beanPath = config.getProperty(LinuxMonitor.CONFIG_KEY_JMX_BEAN_PATH, 
+		beanPath = config.getProperty(LinuxMonitor.CONFIG_KEY_JMX_BEAN_PATH,
 		                              LinuxMonitor.DEFAULT_JMX_BEAN_PATH) + OBJECT_NAME;
 		this.uptimePath = config.getProperty(CONFIG_KEY_UPTIME_PATH, DEFAULT_UPTIME_PATH);
 		try {
 			this.periodMillis = PropertiesUtils.extractInteger(config,
-			                                                   CONFIG_KEY_UPTIME_PERIOD, 
+			                                                   CONFIG_KEY_UPTIME_PERIOD,
 			                                                   DEFAULT_UPTIME_PERIOD) * 1000;
 		} catch (NumberFormatException e) {
-			throw new LinuxMonitoringException("Invalid config parameter for " + 
+			throw new LinuxMonitoringException("Invalid config parameter for " +
 							CONFIG_KEY_UPTIME_PERIOD,e);
 		}
 		// build command line
@@ -135,14 +135,14 @@ public class LinuxLoadAverageJMXWrapper extends Thread implements Monitor {
 			readData();
 		}
 		finally {
-			timer.cancel();	
-		}			
+			timer.cancel();
+		}
 	}
 
 	public void startMonitoring() throws SysmonException {
 		start();
 	}
-	
+
 	public void stopMonitoring() throws InterruptedException {
 		shutdown = true;
 		this.join(periodMillis * 4);
@@ -150,7 +150,7 @@ public class LinuxLoadAverageJMXWrapper extends Thread implements Monitor {
 			log.error("Background thread failed to shutdown in a reasonable amount of time");
 		}
 	}
-	
+
 	@Override
 	public void run() {
 		try {
@@ -209,7 +209,7 @@ public class LinuxLoadAverageJMXWrapper extends Thread implements Monitor {
 				try {
 					JMXUtils.registerMBean(bean, beanPath);
 				} catch (JMException e) {
-					throw new LinuxMonitoringException("Error while registering MX Bean at path " + 
+					throw new LinuxMonitoringException("Error while registering MX Bean at path " +
 													   beanPath,e);
 				}
 			} else {

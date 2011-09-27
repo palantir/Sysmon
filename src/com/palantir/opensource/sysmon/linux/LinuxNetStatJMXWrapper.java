@@ -3,12 +3,12 @@
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
 //   You may obtain a copy of the License at
-// 
+//
 //       http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 //   Unless required by applicable law or agreed to in writing, software
 //   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   
+//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 package com.palantir.opensource.sysmon.linux;
@@ -73,7 +73,7 @@ public class LinuxNetStatJMXWrapper extends Thread implements Monitor {
 	 * Configuration parameter that controls the time between checks for this monitor.
 	 * Config key: {@value}
 	 * @see #DEFAULT_NETSTAT_PERIOD default value
-	 * 
+	 *
 	 */
 	public static final String CONFIG_KEY_NETSTAT_PERIOD = CONFIG_KEY_PREFIX + ".periodMillis";
 	/**
@@ -87,7 +87,7 @@ public class LinuxNetStatJMXWrapper extends Thread implements Monitor {
 	/**
 	 * Regex string to match the second header line in the /proc/net/dev files
 	 */
-	public static final String SECOND_LINE_RE = 
+	public static final String SECOND_LINE_RE =
 		"\\s*face\\s*\\|\\s*bytes\\s*packets\\s*errs\\s*drop\\s*fifo\\s*frame\\s*compressed\\s*" +
 		"multicast\\s*\\|\\s*bytes\\s*packets\\s*errs\\s*drop\\s*fifo\\s*colls\\s*carrier\\s*" +
 		"compressed\\s*$";
@@ -140,7 +140,7 @@ public class LinuxNetStatJMXWrapper extends Thread implements Monitor {
 
 	/**
 	 * Constructs a new monitor.  Checks config and throws errors if there are problems.
-	 * Does not start the background thread.  
+	 * Does not start the background thread.
 	 * @param config
 	 * @throws LinuxMonitoringException
 	 */
@@ -151,12 +151,12 @@ public class LinuxNetStatJMXWrapper extends Thread implements Monitor {
 			config = new Properties();
 		}
 
-		final String beanPath = config.getProperty(LinuxMonitor.CONFIG_KEY_JMX_BEAN_PATH, 
+		final String beanPath = config.getProperty(LinuxMonitor.CONFIG_KEY_JMX_BEAN_PATH,
 		                                           LinuxMonitor.DEFAULT_JMX_BEAN_PATH);
-		
+
 		this.beanPrefix = beanPath + OBJECT_NAME_PREFIX;
-		
-		this.period = PropertiesUtils.extractLong(config,CONFIG_KEY_NETSTAT_PERIOD, 
+
+		this.period = PropertiesUtils.extractLong(config,CONFIG_KEY_NETSTAT_PERIOD,
 		                                          DEFAULT_NETSTAT_PERIOD);
 
 		// check to make sure it will all work
@@ -174,7 +174,7 @@ public class LinuxNetStatJMXWrapper extends Thread implements Monitor {
 			readData();
 		}
 		finally {
-			timer.cancel();	
+			timer.cancel();
 		}
 	}
 
@@ -187,7 +187,7 @@ public class LinuxNetStatJMXWrapper extends Thread implements Monitor {
 
 	/**
 	 * Shuts down the background thread that does the work of this monitor.
-	 * @throws InterruptedException if interrupted while waiting for 
+	 * @throws InterruptedException if interrupted while waiting for
 	 * background thread to exit.
 	 */
 	public void stopMonitoring() throws InterruptedException {
@@ -197,7 +197,7 @@ public class LinuxNetStatJMXWrapper extends Thread implements Monitor {
 			log.error(this.getName() + " did not die after four periods.");
 		}
 	}
-	
+
 	@Override
 	public void run() {
 		try {
@@ -300,7 +300,7 @@ public class LinuxNetStatJMXWrapper extends Thread implements Monitor {
 				JMXUtils.registerMBean(iface, iface.objectName);
 				interfaces.put(iface.objectName, iface);
 			} catch (JMException e) {
-				throw new LinuxMonitoringException("Error while registering MXBean " + 
+				throw new LinuxMonitoringException("Error while registering MXBean " +
 												   iface.objectName,e);
 			}
 		} else {
@@ -318,7 +318,7 @@ public class LinuxNetStatJMXWrapper extends Thread implements Monitor {
 				it.remove();
 				log.info(entry + " is now considered stale (device removed?)");
 				removeBean(entry);
-			} 	
+			}
 		}
 		freshnessTimestamp = System.currentTimeMillis();
 	}

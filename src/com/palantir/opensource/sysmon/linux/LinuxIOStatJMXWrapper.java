@@ -3,12 +3,12 @@
 //   Licensed under the Apache License, Version 2.0 (the "License");
 //   you may not use this file except in compliance with the License.
 //   You may obtain a copy of the License at
-// 
+//
 //       http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 //   Unless required by applicable law or agreed to in writing, software
 //   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   
+//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 package com.palantir.opensource.sysmon.linux;
@@ -42,11 +42,11 @@ import com.palantir.opensource.sysmon.util.PropertiesUtils;
  * This class that fires up <a href='http://linux.die.net/man/1/iostat'>iostat</a>
  * in a background process, reads its output, and publishes it via JMX MBeans.
  * </p>
- * 
+ *
  * <h3>JMX Data Path</h3>
- * Each device will be placed at: 
- * <code>sysmon.linux.beanpath:type=io-device,devicename=&lt;devicename&gt;</code> 
- *  
+ * Each device will be placed at:
+ * <code>sysmon.linux.beanpath:type=io-device,devicename=&lt;devicename&gt;</code>
+ *
  * <h3>Configuration parameters</h3>
  * <em>Note that any value not set in the config file will use the default value.</em>
  * <table cellspacing=5 cellpadding=5><tr><th>Config Key</th><th>Description</th><th>Default Value</th><th>Constant</th></tr>
@@ -71,11 +71,11 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 	static final Logger log = LogManager.getLogger(LinuxIOStatJMXWrapper.class);
 
 	static final String CONFIG_KEY_PREFIX = LinuxMonitor.CONFIG_KEY_PREFIX + ".iostat";
-	
+
 	/**
 	 * Path to iostat executable. Defaults to "iostat" (uses $PATH to find executable).
 	 * Set this config value in the to override where to find iostat.
-	 * 
+	 *
 	 * Config key: {@value}
 	 * @see LinuxIOStatJMXWrapper#DEFAULT_IOSTAT_PATH default value for this config parameter
 	 * @see <a href='http://linux.die.net/man/1/iostat'>iostat(1) on your local linux box</a>
@@ -84,7 +84,7 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 
 	/**
 	 * <p>
-	 * Options passed to <code>iostat</code> (other than period argument).  
+	 * Options passed to <code>iostat</code> (other than period argument).
 	 * </p>
 	 * <p>
 	 * Note that passing config values that
@@ -96,21 +96,21 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 	 * Config key: {@value}
 	 * @see LinuxIOStatJMXWrapper#DEFAULT_IOSTAT_OPTIONS default value for this config parameter
 	 * @see <a href='http://linux.die.net/man/1/iostat'>iostat(1) on your local linux box</a>
-	 */	
+	 */
 	public static final String CONFIG_KEY_IOSTAT_OPTIONS = CONFIG_KEY_PREFIX + ".opts";
 
 	/**
 	 * Period for iostat. Set this config value to override how often iostat is outputting values.
-	 * 
+	 *
 	 * Config key: {@value}
 	 * @see LinuxIOStatJMXWrapper#DEFAULT_IOSTAT_PERIOD default value for this config parameter
 	 * @see <a href='http://linux.die.net/man/1/iostat'>iostat(1) on your local linux box</a>
-	 */	
+	 */
 	public static final String CONFIG_KEY_IOSTAT_PERIOD = CONFIG_KEY_PREFIX + ".period";
 
 	/**
 	 * Default path to iostat executable. Defaults to "iostat" (uses $PATH to find executable).
-	 * 
+	 *
 	 * Config key: {@value}
 	 * @see LinuxIOStatJMXWrapper#CONFIG_KEY_IOSTAT_PATH instructions on overriding this value.
 	 * @see <a href='http://linux.die.net/man/1/iostat'>iostat(1) on your local linux box</a>
@@ -118,8 +118,8 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 	public static final String DEFAULT_IOSTAT_PATH = "iostat"; // let the shell figure it out
 
 	/**
-	 * Default options passed to iostat executable. 
-	 * 
+	 * Default options passed to iostat executable.
+	 *
 	 * Config key: {@value}
 	 * @see LinuxIOStatJMXWrapper#CONFIG_KEY_IOSTAT_OPTIONS instructions on overriding this value.
 	 * @see <a href='http://linux.die.net/man/1/iostat'>iostat(1) on your local linux box</a>
@@ -127,8 +127,8 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 	public static final String DEFAULT_IOSTAT_OPTIONS = "-d -x -k";
 
 	/**
-	 * Default period between iostat output (in seconds). 
-	 * 
+	 * Default period between iostat output (in seconds).
+	 *
 	 * Config key: {@value}
 	 * @see LinuxIOStatJMXWrapper#CONFIG_KEY_IOSTAT_PERIOD Instructions on overriding this value.
 	 * @see <a href='http://linux.die.net/man/1/iostat'>iostat(1) on your local linux box</a>
@@ -136,7 +136,7 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 	public static final Integer DEFAULT_IOSTAT_PERIOD = Integer.valueOf(60);
 
 	/**
-	 * Relative JMX data path where this monitor publishes its data.  This will have the 
+	 * Relative JMX data path where this monitor publishes its data.  This will have the
 	 * individual device name appended to the end in the JMX tree.
 	 * Path: {@value}
 	 */
@@ -154,15 +154,15 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 	 * regex to match version 7.x of iostat.
 	 * {@value}
 	 */
-	static final String HEADER_V7_RE = 
-		"^\\s*Device:\\s+rrqm/s\\s+wrqm/s\\s+r/s\\s+w/s\\s+rkB/s\\s+wkB/s\\s+avgrq-sz\\s+" + 
+	static final String HEADER_V7_RE =
+		"^\\s*Device:\\s+rrqm/s\\s+wrqm/s\\s+r/s\\s+w/s\\s+rkB/s\\s+wkB/s\\s+avgrq-sz\\s+" +
 		"avgqu-sz\\s+await\\s+svctm\\s+%util\\s*$";
 	/**
 	 * regex to match version 5.x of iostat.
 	 * Pattern: {@value}
 	 */
-	static final String HEADER_V5_RE = 
-		"^\\s*Device:\\s+rrqm/s\\s+wrqm/s\\s+r/s\\s+w/s\\s+rsec/s\\s+wsec/s\\s+rkB/s\\s+" + 
+	static final String HEADER_V5_RE =
+		"^\\s*Device:\\s+rrqm/s\\s+wrqm/s\\s+r/s\\s+w/s\\s+rsec/s\\s+wsec/s\\s+rkB/s\\s+" +
 		"wkB/s\\s+avgrq-sz\\s+avgqu-sz\\s+await\\s+svctm\\s+%util\\s*$";
 	/**
 	 * {@link Pattern} to match version 7.x of iostat header output.
@@ -181,8 +181,8 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 	static final Pattern DATA_V7_PAT = buildWhitespaceDelimitedRegex(12);
 
 	/**
-	 * Pattern for version 5 of iostat.  It has three additional fields that we ignore in our 
-	 * parsing. Because of that, we don't build it programmatically, but use this specially 
+	 * Pattern for version 5 of iostat.  It has three additional fields that we ignore in our
+	 * parsing. Because of that, we don't build it programmatically, but use this specially
 	 * rolled regex.  The upshot is that it's group index compatible with the version 7 regex.
 	 */
 	static final String DATA_V5_RE = "^\\s*(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)" +
@@ -194,7 +194,7 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 	 * Pattern: {@value}
 	 */
 	static final Pattern DATA_V5_PAT = Pattern.compile(DATA_V5_RE);
-	
+
 	long freshnessTimestamp = System.currentTimeMillis();
 	final String iostatCmd[];
 	final int period;
@@ -211,10 +211,10 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 	final Map<String,LinuxIOStat> beans = new HashMap<String, LinuxIOStat>();
 
 	/**
-	 * Constructs a new iostat JMX wrapper.  Does not start monitoring.  Call 
+	 * Constructs a new iostat JMX wrapper.  Does not start monitoring.  Call
 	 * {@link #startMonitoring()} to start monitoring and publishing
 	 * JMX data.
-	 *  
+	 *
 	 * @param config configuration for this service
 	 * @see #CONFIG_KEY_IOSTAT_OPTIONS
 	 * @see #CONFIG_KEY_IOSTAT_PATH
@@ -231,13 +231,13 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 		}
 
 		try {
-			final String beanPathPrefix = config.getProperty(LinuxMonitor.CONFIG_KEY_JMX_BEAN_PATH, 
+			final String beanPathPrefix = config.getProperty(LinuxMonitor.CONFIG_KEY_JMX_BEAN_PATH,
 			                                                 LinuxMonitor.DEFAULT_JMX_BEAN_PATH);
 			beanPath = beanPathPrefix + OBJECT_NAME_PREFIX;
-			
+
 			iostatPath = config.getProperty(CONFIG_KEY_IOSTAT_PATH,DEFAULT_IOSTAT_PATH);
 			period = PropertiesUtils.extractInteger(config,
-			                                        CONFIG_KEY_IOSTAT_PERIOD, 
+			                                        CONFIG_KEY_IOSTAT_PERIOD,
 			                                        DEFAULT_IOSTAT_PERIOD);
 			String iostatOpts = config.getProperty(CONFIG_KEY_IOSTAT_OPTIONS,
 			                                       DEFAULT_IOSTAT_OPTIONS);
@@ -246,17 +246,17 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 			log.info("iostat cmd: " + cmd);
 
 		} catch (NumberFormatException e) {
-			throw new LinuxMonitoringException("Invalid config Parameter for " + 
+			throw new LinuxMonitoringException("Invalid config Parameter for " +
 			                                   CONFIG_KEY_IOSTAT_PERIOD,e);
 		}
 	}
 
 	/**
-	 * Start iostat as a background process and makes sure header output 
+	 * Start iostat as a background process and makes sure header output
 	 * parses correctly.  If no errors are encountered, starts this instance's Thread
 	 * to read the data from the iotstat process in the background.
-	 * 
-	 * @throws LinuxMonitoringException upon error with iostat startup. 
+	 *
+	 * @throws LinuxMonitoringException upon error with iostat startup.
 	 */
 	public void startMonitoring() throws LinuxMonitoringException {
 		if(shutdown){
@@ -272,11 +272,11 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 			throw e;
 		}
 	}
-			
+
 	/**
-	 * Fires up iostat in the background and verifies that the header data parses 
+	 * Fires up iostat in the background and verifies that the header data parses
 	 * as expected.
-	 * 
+	 *
 	 * @throws LinuxMonitoringException upon error starting iostat or parsing output.
 	 */
 	private void startIOStat() throws LinuxMonitoringException {
@@ -289,30 +289,30 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 			iostatStderr = iostat.getErrorStream();
 			iostatStdin = iostat.getOutputStream();
 
-			// first line is discarded 
+			// first line is discarded
 			String firstLine = iostatStdout.readLine();
 			if(firstLine == null) {
-				throw new LinuxMonitoringException("Unexpected end of input from iostat: " + 
+				throw new LinuxMonitoringException("Unexpected end of input from iostat: " +
 				"null first line");
 			}
 			if(!firstLine.trim().startsWith(FIRST_LINE_PREFIX)) {
-				log.warn("iostat returned unexpected first line: " + firstLine + 
+				log.warn("iostat returned unexpected first line: " + firstLine +
 				         ". Expected something that started with: " + FIRST_LINE_PREFIX);
 			}
 
 			String secondLine = iostatStdout.readLine();
 			if(secondLine == null) {
-				throw new LinuxMonitoringException("Unexpected end of input from iostat: " + 
+				throw new LinuxMonitoringException("Unexpected end of input from iostat: " +
 				"null second line");
 			}
 			if(!(secondLine.trim().length() == 0)) {
-				throw new LinuxMonitoringException("Missing blank second line.  Found this instead: " + 
+				throw new LinuxMonitoringException("Missing blank second line.  Found this instead: " +
 				                                   secondLine);
 			}
 			// make sure we're getting the fields we expect
 			String headerLine = iostatStdout.readLine();
 			if(headerLine == null) {
-				throw new LinuxMonitoringException("Unexpected end of input from iostat: " + 
+				throw new LinuxMonitoringException("Unexpected end of input from iostat: " +
 				"null header line");
 			}
 
@@ -325,7 +325,7 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 				headerPattern = HEADER_V7_PAT;
 				dataPattern = DATA_V7_PAT;
 			} else {
-				final String msg = "Header line does match expected header! Expected: " + 
+				final String msg = "Header line does match expected header! Expected: " +
 				HEADER_V7_PAT.pattern() + "\nGot: " + headerLine + "\n";
 				throw new LinuxMonitoringException(msg);
 			}
@@ -342,7 +342,7 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 					". Perhaps the sysstat package needs to be installed?";
 				} else {
 					errorMsg = "iostat not found in the executable $PATH for this process." +
-					" Perhaps the sysstat package needs to be installed?" + 
+					" Perhaps the sysstat package needs to be installed?" +
 					" (Try 'yum install sysstat' as root.)";
 				}
 				throw new LinuxMonitoringException(errorMsg);
@@ -356,7 +356,7 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 
 	/**
 	 * Shuts down and cleans up both background iostat process and data reading thread.
-	 * 
+	 *
 	 * @throws InterruptedException
 	 */
 	public void stopMonitoring() throws InterruptedException {
@@ -433,7 +433,7 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 				it.remove();
 				log.info(entry + " is now considered stale (device removed?)");
 				removeBean(entry);
-			} 	
+			}
 		}
 		freshnessTimestamp = System.currentTimeMillis();
 	}
@@ -464,9 +464,9 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 			dataRow.timestamp = System.currentTimeMillis();
 			dataRow.device = m.group(1);
 			dataRow.samplePeriodInSeconds = period;
-			dataRow.mergedReadRequestsPerSecond = parseFloat(m.group(2)); 
+			dataRow.mergedReadRequestsPerSecond = parseFloat(m.group(2));
 			dataRow.mergedWriteRequestsPerSecond = parseFloat(m.group(3));
-			dataRow.readRequestsPerSecond = parseFloat(m.group(4)); 
+			dataRow.readRequestsPerSecond = parseFloat(m.group(4));
 			dataRow.writeRequestsPerSecond = parseFloat(m.group(5));
 			dataRow.kilobytesReadPerSecond = parseFloat(m.group(6));
 			dataRow.kilobytesWrittenPerSecond = parseFloat(m.group(7));
@@ -477,7 +477,7 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 			dataRow.bandwidthUtilizationPercentage = parseFloat(m.group(12));
 			updateBean(dataRow);
 			return;
-		} 
+		}
 
 
 
@@ -499,7 +499,7 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 				JMXUtils.registerMBean(bean, bean.objectName);
 				beans.put(bean.objectName, bean);
 			} catch (JMException e) {
-				throw new LinuxMonitoringException("Error while registering bean for " + 
+				throw new LinuxMonitoringException("Error while registering bean for " +
 												   bean.objectName,e);
 			}
 		} else {
@@ -508,7 +508,7 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 	}
 
 	/**
-	 * Shuts down background iostat process and cleans up related I/O resources related to IPC 
+	 * Shuts down background iostat process and cleans up related I/O resources related to IPC
 	 * with said process.
 	 */
 	private synchronized void cleanup() {
@@ -517,7 +517,7 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 			if(iostat != null) {
 				iostat.destroy();
 			}
-			
+
 			IOUtils.closeQuietly(iostatStdout);
 			iostatStdout = null;
 
