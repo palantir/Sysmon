@@ -16,8 +16,8 @@ Currently, Linux is the only platform for which monitoring has been implemented.
 * The [Wiki](Sysmon/wiki) has all the project documentation.
 * API docs are available [here](http://palantir.github.com/Sysmon/apidocs)
 * Mailing lists are hosted on Google Groups:
-    * [Announce](http://groups.google.com/ptoss-sysmon-announce)
-    * [General](http://groups.google.com/ptoss-sysmon)
+    * [Announce](http://groups.google.com/group/ptoss-sysmon-announce)
+    * [General](http://groups.google.com/group/ptoss-sysmon)
 * Please file issues on the [Github Issue Tracker](/palantir/Sysmon/issues)
 * Email project admin: [Ari Gesher](mailto:agesher@palantir.com)
 
