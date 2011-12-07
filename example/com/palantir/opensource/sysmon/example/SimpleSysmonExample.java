@@ -47,7 +47,7 @@ public class SimpleSysmonExample {
 		final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
 		ObjectName allSysmonObjectsPattern = new ObjectName(SystemMonitor.DEFAULT_JMX_BEAN_PATH + ".*:*");
 		
-		// take data every two seconds, ten times
+		// take data every two seconds, twice 
 		for (int i = 0; i < 10; i++){
 			Thread.sleep(2000);
 			String timestamp = getTimestamp();
