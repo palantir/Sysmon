@@ -151,6 +151,13 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 	 */
 	static final Pattern DEVICE_ONLY = Pattern.compile("^\\s*\\S+\\s*$");
 	/**
+	 * regex to match version 9.x of iostat.
+	 * {@value}
+	 */
+	static final String HEADER_V9_RE =
+		"^\\s*Device:\\s+rrqm/s\\s+wrqm/s\\s+r/s\\s+w/s\\s+rkB/s\\s+wkB/s\\s+avgrq-sz\\s+" +
+		"avgqu-sz\\s+await\\s+r_await\\s+w_await\\s+svctm\\s+%util\\s*$";
+	/**
 	 * regex to match version 7.x of iostat.
 	 * {@value}
 	 */
@@ -165,6 +172,10 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 		"^\\s*Device:\\s+rrqm/s\\s+wrqm/s\\s+r/s\\s+w/s\\s+rsec/s\\s+wsec/s\\s+rkB/s\\s+" +
 		"wkB/s\\s+avgrq-sz\\s+avgqu-sz\\s+await\\s+svctm\\s+%util\\s*$";
 	/**
+	 * {@link Pattern} to match version 9.x of iostat header output.
+	 * Pattern: {@value}
+	 */
+	static final Pattern HEADER_V9_PAT = Pattern.compile(HEADER_V9_RE);	/**
 	 * {@link Pattern} to match version 7.x of iostat header output.
 	 * Pattern: {@value}
 	 */
@@ -180,6 +191,22 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 	 */
 	static final Pattern DATA_V7_PAT = buildWhitespaceDelimitedRegex(12);
 
+	/**
+	 * Pattern for version 9 of iostat.  It has two additional fields that we ignore in our
+	 * parsing. Because of that, we don't build it programmatically, but use this specially
+	 * rolled regex.  The upshot is that it's group index compatible with the version 7 regex.
+	 */
+	static final String DATA_V9_RE = "^\\s*(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)" +
+									  "\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)" +
+									  "\\s+\\S+\\s+\\S+" + // skipped fields
+									  "\\s+(\\S+)\\s+(\\S+)\\s*$";
+	
+	/**
+	 * {@link Pattern} to match version 9.x of iostat data output.
+	 * Pattern: {@value}
+	 */
+	static final Pattern DATA_V9_PAT = Pattern.compile(DATA_V9_RE);
+	
 	/**
 	 * Pattern for version 5 of iostat.  It has three additional fields that we ignore in our
 	 * parsing. Because of that, we don't build it programmatically, but use this specially
@@ -317,13 +344,17 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 			}
 
 			if(HEADER_V5_PAT.matcher(headerLine).matches()){
-				log.info("Detected iostats version 5.");
+				log.info("Detected iostat version 5.");
 				headerPattern = HEADER_V5_PAT;
 				dataPattern = DATA_V5_PAT;
 			} else if(HEADER_V7_PAT.matcher(headerLine).matches()) {
-				log.info("Detected iostats version 7.");
+				log.info("Detected iostat version 7.");
 				headerPattern = HEADER_V7_PAT;
 				dataPattern = DATA_V7_PAT;
+			} else if(HEADER_V9_PAT.matcher(headerLine).matches()) {
+				log.info("Detected iostat version 9.");
+				headerPattern = HEADER_V9_PAT;
+				dataPattern = DATA_V9_PAT;
 			} else {
 				final String msg = "Header line does match expected header! Expected: " +
 				HEADER_V7_PAT.pattern() + "\nGot: " + headerLine + "\n";
