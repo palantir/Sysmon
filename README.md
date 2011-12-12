@@ -39,3 +39,5 @@ Sysmon is made available under the Apache 2.0 License.
 >WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 >See the License for the specific language governing permissions and
 >limitations under the License.
+
+<img id="disclaimer" src="/_ptwp_live_ect0/wp-content/uploads/2011/09/disclaimer.png"/>
