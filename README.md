@@ -1,4 +1,9 @@
-![Palantir Logo](/palantir/Sysmon/wiki/palantir-logo.png)
+> Disclaimer: Palantir Technologies is not affiliated with, endorsed or sponsored by [Palantir.net](http://palantir.net/), Inc.
+> Palantir.net's website is http://palantir.net
+
+
+![Palantir Logo](/palantir/Sysmon/wiki/palantir-masthead.png)
+
 # Sysmon - lightweight platform monitoring for Java VMs #
 
 ---
