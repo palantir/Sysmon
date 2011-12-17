@@ -143,7 +143,7 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 	public static final String OBJECT_NAME_PREFIX = ":type=io-device,devicename=" ;
 
 
-	static final String FIRST_LINE_PREFIX = "Linux 2.6";
+	public static final Pattern FIRST_LINE_PREFIX = Pattern.compile("^Linux (2.6|3.1).*");
 
 	/**
 	 * iostat likes to sometimes break things across two lines.  This detects that situation.
@@ -322,9 +322,11 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 				throw new LinuxMonitoringException("Unexpected end of input from iostat: " +
 				"null first line");
 			}
-			if(!firstLine.trim().startsWith(FIRST_LINE_PREFIX)) {
+			if(!FIRST_LINE_PREFIX.matcher(firstLine).matches()) {
 				log.warn("iostat returned unexpected first line: " + firstLine +
-				         ". Expected something that started with: " + FIRST_LINE_PREFIX);
+				         ". Expected something that started with: /" + FIRST_LINE_PREFIX.pattern() + "/");
+			} else {
+				log.debug("IOStat Header Line: " + firstLine);
 			}
 
 			String secondLine = iostatStdout.readLine();
@@ -412,8 +414,8 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 						if(DEVICE_ONLY.matcher(line).matches()) {
 							// we have broken lines, put them together
 							String remainder = iostatStdout.readLine();
-							if(log.isDebugEnabled()) {
-								log.debug("Joining '" + line + "' and '" + remainder + "'.");
+							if(log.isTraceEnabled()) {
+								log.trace("Joining '" + line + "' and '" + remainder + "'.");
 							}
 							line = line + remainder;
 						}
@@ -480,7 +482,7 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 		// header line
 		m = headerPattern.matcher(line);
 		if(m.matches()) {
-			log.debug("Processing header line");
+			log.trace("Processing header line");
 			// Data line
 			checkFreshness();
 			return;
@@ -489,7 +491,7 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 		// data line
 		m = dataPattern.matcher(line);
 		if(m.matches()) {
-			log.debug("Processing data line: " + line);
+			log.trace("Processing data line: " + line);
 			String objectName = m.group(1);
 			LinuxIOStat dataRow = new LinuxIOStat(beanPath + objectName);
 			dataRow.timestamp = System.currentTimeMillis();
@@ -515,7 +517,7 @@ public class LinuxIOStatJMXWrapper extends Thread implements Monitor {
 		// blank line
 		if(line.trim().length() == 0) {
 			// ignore
-			log.debug("Processing blank line");
+			log.trace("Processing blank line");
 			return;
 		}
 

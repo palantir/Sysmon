@@ -66,6 +66,7 @@ public class IOStatTest extends LinuxBaseTest {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+		LogManager.getLogger(LinuxIOStatJMXWrapper.class).setLevel(Level.DEBUG);
 		installLoggingErrorDetector(LinuxIOStatJMXWrapper.class, Level.ERROR,Level.WARN);
 		iostatWrapper = new LinuxIOStatJMXWrapper(generateConfig());
 		System.out.println("Starting iostat wrapper");
