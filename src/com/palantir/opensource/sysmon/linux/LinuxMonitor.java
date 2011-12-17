@@ -180,7 +180,7 @@ public class LinuxMonitor implements SystemMonitor {
 		if(!osName.equals("Linux")) {
 			throw new SysmonException("Linux monitoring can only run on Linux.  Platform: " + osName);
 		}
-		if(!osVersion.startsWith("2.6")) {
+		if(!osVersion.startsWith("2.6")  || !osVersion.startsWith("3.1")) {
 			log.warn("Linux monitoring has only been tested on Linux 2.6, " +
 			         "so some things may not work. Detected version: " + osVersion);
 		}

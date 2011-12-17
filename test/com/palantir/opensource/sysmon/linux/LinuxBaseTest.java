@@ -25,10 +25,13 @@ public abstract class LinuxBaseTest extends BaseTest {
 		String osName = System.getProperty("os.name","UNKNOWN"); // use default to avoid NPE
 		String osVersion = System.getProperty("os.version","UNKNOWN"); // use default to avoid NPE
 		
+		System.out.println("OS: " + osName);
+		System.out.println("Version: " + osVersion);
+		
 		if(!osName.equals("Linux")) {
 			fail("Linux tests can only run on a Linux system.  Platform: " + osName);
 		}
-		if(!osVersion.startsWith("2.6")) {
+		if(!osVersion.startsWith("2.6") && !osVersion.startsWith("3.1")) {
 			System.err.println("Running on Linux " + osVersion + " - untested.  " +
 							   "Good luck! (Things will probably break)");
 		}
