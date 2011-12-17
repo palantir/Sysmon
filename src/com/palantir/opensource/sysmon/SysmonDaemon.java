@@ -118,7 +118,7 @@ public class SysmonDaemon extends Thread {
 
 		String platformId = osName + " " + osVersion;
 		try {
-			if(osName.equals("Linux") && osVersion.startsWith("2.6")) {
+			if(osName.equals("Linux") && (osVersion.startsWith("2.6") || osVersion.startsWith("3.1"))) {
 				return LinuxMonitor.class.newInstance();
 			}
 		} catch (Exception e) {
