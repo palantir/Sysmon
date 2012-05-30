@@ -15,8 +15,8 @@
  * <p>
  * The Sysmon package allows a Java program to monitor the health of the
  * host system that the Java VM is running on and access that data via
- * <a href='http://download.oracle.com/javase/7/docs/technotes/guides/jmx/index.html'>Java Management Extensions</a>
- * (non-Javadoc documentation available in the <a href='http://github.com/palantir/Sysmon/wiki'>GitHub Project Wiki</a>).
+ * <a href=http://download.oracle.com/javase/7/docs/technotes/guides/jmx/index.html target=_blank>Java Management Extensions</a>
+ * (non-Javadoc documentation available in the <a href=http://github.com/palantir/Sysmon/wiki target=_blank>GitHub Project Wiki</a>).
  * </p>
  * <p>
  * The Sysmon package can be used as a library inside an existing program or

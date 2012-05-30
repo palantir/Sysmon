@@ -13,6 +13,6 @@
 //   limitations under the License.
 /**
  * A collection of utility code to streamline the coding for the
- * <a href='http://github.com/palantir/Sysmon'>Sysmon project</a>.
+ * <a href=http://github.com/palantir/Sysmon target=_blank>Sysmon project</a>.
  */
 package com.palantir.opensource.sysmon.util;
