@@ -6,6 +6,11 @@ Sysmon can be run as a standalone daemon or as a library to add platform monitor
 
 Currently, Linux is the only platform for which monitoring has been implemented.  However, building new or porting existing monitors to other Unix or Unix-like platforms should be pretty straightforward.
 
+Resources
+---------
+* [Project Wiki](https://github.com/palantir/Sysmon/wiki)
+* [API docs](http://palantir.github.io/Sysmon/apidocs/)
+
 License
 -------
 This project is made available under the [Apache 2.0 License](http://www.apache.org/licenses/LICENSE-2.0).
